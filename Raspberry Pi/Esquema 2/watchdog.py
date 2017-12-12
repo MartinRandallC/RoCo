@@ -1,5 +1,6 @@
 import os
 import time
+import subprocess
 
 while 1:
     os.system("ps x > log.txt")
@@ -11,7 +12,14 @@ while 1:
     if "top_block.py" not in archivo_leido:
         os.system("echo Reabriendo top_block.py")
         os.system("python2 top_block.py &")
-    os.system("echo _______TEMPERATURA________")
-    os.system("/opt/vc/bin/vcgencmd measure_temp")
+        
+    temperatura = subprocess.check_output("/opt/vc/bin/vcgencmd measure_temp", shell=True)
+    print(temperatura)
+    temperatura = temperatura.split("=")
+    temperatura = temperatura[1].split(".")
+    if(temperatura[0] > 95):
+        os.system("echo passwd | sudo shutdown now")
+        
     time.sleep(10)
+    
 file.close()
